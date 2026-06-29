@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class XrayMod implements ClientModInitializer {
@@ -15,12 +15,10 @@ public class XrayMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        // Register custom category using ResourceLocation
         KeyMapping.Category category = KeyMapping.Category.register(
-            ResourceLocation.fromNamespaceAndPath("xraymod", "general")
+            Identifier.fromNamespaceAndPath("xraymod", "general")
         );
 
-        // Register KeyMapping
         toggleKeyMapping = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.xraymod.toggle",
             InputConstants.Type.KEYSYM,
@@ -28,19 +26,16 @@ public class XrayMod implements ClientModInitializer {
             category
         ));
 
-        // Listen for client ticks
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (toggleKeyMapping.consumeClick()) {
                 xrayEnabled = !xrayEnabled;
                 if (client.player != null) {
-                    // Send status message to action bar overlay (true)
-                    client.player.displayClientMessage(
-                        Component.literal("X-Ray: " + (xrayEnabled ? "§aEnabled" : "§cDisabled")), 
-                        true
+                    client.player.sendOverlayMessage(
+                        Component.literal("X-Ray: " + (xrayEnabled ? "§aEnabled" : "§cDisabled"))
                     );
                 }
                 if (client.levelRenderer != null) {
-                    client.levelRenderer.allChanged();
+                    client.levelRenderer.clearVisibleSections();
                 }
             }
         });
