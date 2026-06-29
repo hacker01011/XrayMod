@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.xray.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "MixinAbstractBlockState",
+    "MixinRenderLayers"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
